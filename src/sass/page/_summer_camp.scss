@@ -1,0 +1,385 @@
+// 桌機板顯示目前頁面
+.tab_container li a#page_active2::before {
+    content: "";
+    background-color: $btn_color_primary;
+    width: 100%;
+    height: 3px;
+    position: absolute;
+    left: 0;
+    top: 26px;
+    display: block;
+    transform: scaleX(1);
+  }
+
+  // 漢堡選單顯示目前頁面
+  ul.menu a li#h_page_active2{
+      color: $btn_color_primary;
+  }
+
+* {
+    box-sizing: border-box;
+  }
+  body{
+    margin: 0px;
+  }
+  
+  img{
+    max-width: 100%;
+  }
+
+//   =========== banner ===========
+.header{
+    border: 1px solid red;
+    max-width: 1400px;
+    height: 100px;
+    background-color: blue;
+}
+
+.bannerr{
+    // border: 1px solid red;
+    background: url("../images/summer_camp/Rectangle119.jpg");
+    width: 100%;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: 0px 0px;
+    margin: 0 auto;
+    @include flex-center;
+    height: 500px; 
+    // display: none;
+}
+// .bannerr-winter{
+//     // border: 1px solid red;
+//     background: url("../images/summer_camp/Rectangle 119.png");
+//     width: 100%;
+//     background-repeat: no-repeat;
+//     background-size: cover;
+//     background-position: 0px 0px;
+//     margin: 0 auto;
+//     @include flex-center;
+//     height: 500px;
+//     display: none;
+// }
+// .-onn{
+//     display: block;
+// }
+
+
+.scope{
+    // border: 1px solid red;
+    width: 80%;
+    margin: 0 auto;
+    position: relative;
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.summercamp{
+    // border: 1px solid red; 
+    display: inline-block;
+    position: absolute;
+    left: -50px;
+    top: -20px;
+}
+@media screen and (max-width: 1200px){
+    .summercamp{
+        position: static;
+        margin: 0 auto;
+        padding-bottom: 20px;
+    }
+    .summercamp br{
+        display: none;
+    }
+}
+@media screen and (max-width: 576px){
+    .summercamp{
+        text-align: center;
+    }
+    .summercamp br{
+        display: block;
+    }
+}
+
+
+.summercamp-summer{
+    font-size: $fontSize_Banner;
+    color: white;
+    @media screen and (max-width: 414px) {
+        font-size: 60px;
+    }
+}
+
+.summercamp-camp{
+    font-size: $fontSize_BigTitle;
+    color: white;
+}
+
+.bg-gray{
+    // border: 1px solid black;
+    width: 90%;
+    background: #82828280;
+    margin: 0 auto;
+    // text-align: center;
+    @include flex-center;
+}
+
+.bg-text{
+    font-size: $fontSize_Sub; 
+    color: white;
+    line-height: 30px; 
+    letter-spacing: 2px;
+    padding: 35px 60px;
+}
+@media screen and (max-width: 576px){
+    .bg-text{
+        line-height: 25px; 
+        padding: 20px 40px; 
+    }
+}
+
+
+
+//   =========== 內容 ===========
+
+// ====== aside ======
+.col3-aside{
+    background-color: #f2f2f2;
+}
+@media screen and (min-width: 760px) and (max-width: 860px) {
+    .col3-aside{
+        background-color: #f2f2f2;
+        width: 100%;
+    }
+    .change-page{
+        width: 100%;
+    }
+}
+
+.accordion-header .accordion-button, .accordion-item .accordion-collapse{
+    background-color: #f2f2f2; 
+}
+
+.accordion-header .accordion-button{
+    font-size: $fontSize_Nav;
+}
+
+.accordion-body .form-check{
+    margin: 20px 0;
+}
+
+.camp-sw{
+    display: flex;
+    justify-content: space-between;
+    padding: 12px 20px;   
+    font-size: $fontSize_Nav; 
+    text-align: left;
+    position: relative;
+}
+
+.camp_two{
+    margin: 0 auto;
+    // border: 1px solid blue;
+    width: 80%;
+    a:hover{
+    color: $font_color_content;        
+    }
+}
+
+.sum{
+    background-color: white;
+    margin: 80px 0 0 0;
+}
+
+.win{
+    background-color: white;
+    margin: 30px 0 60px 0;
+    color: $font_color_content;
+    border: 2px solid #666666;
+
+}
+.camp-sw-now{
+    background-color: $color_primary;
+    color: white;
+
+}
+
+.find-trip{
+    font-size: $fontSize_Title;
+    text-align: center;
+    margin: 0 0 60px 0;
+}
+
+
+
+
+
+// ====== main ======
+// .container, .row, .col-3, .col-9{
+// //  border: 1px solid red;
+// }
+
+.change-page {
+    display: block;
+}
+
+#app-summer{
+    height: 1750px;
+    overflow: hidden;
+    position: relative;
+    transition: 1s ease;
+    padding-bottom: 30px;
+}
+#app-summer.-open{
+    height: auto;
+    position: relative;
+}
+.sw-row{
+    margin-bottom: 30px !important;
+}
+@media screen and (min-width: 1680px) and (max-width: 1981px) {
+    .sw-row{
+        margin-bottom: 30px !important;
+        margin-left: calc((100% - 1255px) / 2);
+    }
+}
+@media screen and (min-width: 1250px) and (max-width: 1679.98px) {
+    .sw-row{
+        margin-bottom: 30px !important;
+        margin-left: calc((100% - 941px) / 2);
+    }
+}
+@media screen and (min-width: 768px) and (max-width: 1249.98px) {
+    .sw-row{
+        margin-bottom: 30px !important;
+        margin-left: calc((100% - 627px) / 2);
+    }
+}
+@media screen and (min-width: 605px) and (max-width: 767.98px) {
+    .sw-row{
+        margin-bottom: 30px !important;
+        margin-left: calc((100% - 627px) / 2);
+    }
+}
+@media screen and (min-width: 320px) and (max-width: 604.98px) {
+    .sw-row{
+        margin-bottom: 30px !important;
+        margin-left: calc((100% - 314px) / 2);
+    }
+}
+.btn_show_more{
+    display: flex;
+    justify-content: center;
+}
+
+button.showMore.-off{
+    display: none;
+}
+
+.row .card{
+    padding: 0;
+    margin: 50px 10px 5px 10px;
+    height: 520px;
+    border-radius: 20px 20px 20px 20px;
+    border: 0.5px solid #66666633;
+    overflow: hidden;
+    box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.1);
+    position: relative;
+    i{
+        margin: 12px;
+        width: 40px;
+        height: 50px;
+        font-size: 24px;
+        color:white;
+        position: absolute;
+        left: 0;
+        top: 0;
+    }
+    i:hover{  
+        color: #EB5757;
+        cursor: pointer;
+    }
+    .summer-camp-favorite{
+      color: #EB5757;
+    }
+    .local_theme-favorite{
+      color: #EB5757;
+    }
+    a:hover{
+        color: black;        
+    }
+}
+.card-body{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    hr{
+        width: 100%;
+    }
+    .card-title{
+        font-size: $fontSize_CardTitle;
+        text-align: center;
+        line-height: 35px;
+        font-weight: 600; 
+    }
+    .card-text{
+        text-align: left;
+        font-size: $fontSize;
+        line-height: 25px;
+        letter-spacing: 1px;
+        margin-bottom: 40px;
+    }
+    .a{
+        // border: 1px solid red;
+        color: $font_color_content;
+        display: block;
+        position: absolute;
+        bottom: 30px;
+    }
+    a.a:hover{
+        color: $btn_color_primary;
+    }
+    .a img{
+        transform: translateY(25%);
+    }
+}
+
+
+
+
+
+.row .button{
+    margin: 70px auto;
+    background-color: $btn_color_primary;
+    color: white;
+    width: 250px;
+    height: 50px;
+    border: 0;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.row .button:hover{
+    background-color: #ffaa00;
+}
+
+.local_theme_two{
+    text-align: center;
+}
+
+.local_theme-sum{
+    width: 30%;
+    display: inline-block;
+    margin-right: 30px;
+    color: white;
+    background-color: $color_primary;
+}
+
+.local_theme-win{
+    width: 30%;
+    display: inline-block;
+    margin-left: 30px;
+}
+
+
+
+

@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  @@include('./layout/meta.html', {
+  "title" : "會員註冊"
+  })
+  @@include('./layout/chat.html')
+
+  <script>
+    function init() {
+      showMember();
+    }
+
+
+    // 顯示會員資訊
+    function showMember() {
+      $.ajax({
+        method: "POST",
+        url: "./Frontend/Member.php",
+        data: {},
+        dataType: "text",
+        success: function (response) {
+          $('.guest_icon').css('display', 'none');
+          $('.icon_create').after(response);
+        },
+        error: function (exception) {
+          alert("數據載入失敗: " + exception.status);
+        },
+      });
+    }
+    // 顯示會員資訊結束
+
+    //登入檢查 ---------------------------------------------------------------------------------
+    function loginCheck(pid) {
+      $.ajax({
+        method: "POST",
+        url: "Frontend/LoginCheck.php",
+        data: {},
+        dataType: "text",
+        success: function (response) {
+          if (response == "") {
+            //尚未登入->前往Login.php
+            alert("請先登入，將前往登入頁");
+            location.href = "/member_signIn.html";
+          } else {
+            addToCar(pid);
+          }
+        },
+        error: function (exception) {
+          alert("數據載入失敗: " + exception.status);
+        },
+      });
+    }
+
+  </script>
+</head>
+
+<body onload="init()">
+  @@include('./layout/header.html')
+  <!-- 會員隱私權條款 modal 彈窗 -->
+  <div class="memberSignIn_text_bg">
+    <div class="memberSignIn_right_term">
+      <div class="memberSignIn_text-center">
+        <div></div>
+        <div class="memberSignIn_text">
+          <h1>CAMPION使用權益</h1>
+        </div>
+        <div class="memberSignIn_center">
+          <div class="memberSignIn_center_X">×</div>
+        </div>
+      </div>
+      <div class="memberSignIn_right_container">
+        <h3>遵守會員規範</h3>
+        <blockquote>
+          <p>本同意書之解釋及適用以及會員因使用本服務而與TibaMe間所生之權利義務關係，應依中華民國法令解釋適用之。其因此所生之爭議，以臺灣臺北地方法院為第一審管轄法院。</p>
+          <p>在您於CAMPION註冊成為會員後，可以使用CAMPION所提供之各種服務。當您使用CAMPION時，即表示同意接受CAMPION之會員規範及所有注意事項之約束。</p>
+        </blockquote>
+        <h3>使用服務</h3>
+        <blockquote>
+          <p>請您於註冊時儘可能提供符合真實之個人資料，您所登錄之資料事後若有變更時，也一併隨時更新。</p>
+        </blockquote>
+        <h3>個人資料之蒐集與使用</h3>
+        <blockquote>
+          <ol>
+            <li>
+              會員於CAMPION提供之個人資料，由緯育股份有限公司及其關係企業（以下簡稱本公司）、及本公司委外服務廠商基於系統營運、客戶服務、帳務管理及其他合於本公司營業項目之特定目的，依個人資料保護法相關規定，對會員之個人資料進行蒐集、處理、利用及／或國際傳輸等事宜，以供CAMPION
+              營運期間與業務涉及區域範圍內進行聯絡、會員管理、統計調查與分析、系統營運或系統資料庫之執行、使用與處理等用途。</li>
+            <li>除法律另有規定或本公司、CAMPION執行業務所必須者外，會員可隨時透過
+              CAMPION網站，就會員之個人資料向本公司為右列主張或請求：（一）查閱或請求閱覽（二）製給複製本（三）補充或更正（四）停止蒐集、處理或利用（五）刪除。若會員就其個人資料向本公司申請查詢、閱覽個人資料或製給複製本時，本公司將酌收費用。
+            </li>
+            <li>
+              會員得自由選擇是否提供相關個人資料，惟會員所拒絕提供之個人資料，若是本公司或CAMPION辦理業務或作業所需之必要資料，本公司與CAMPION可能無法進行必要的業務或作業而礙難為會員提供相關服務，並有權暫時停止提供對會員之服務。
+            </li>
+          </ol>
+        </blockquote>
+        <h3>個人資料之保護</h3>
+        <blockquote>
+          <p>對於會員所登錄或留存之個人資料，CAMPION在未獲得會員同意以前，決不對外揭露會員之姓名、地址、電子郵件地址及其他依法受保護之個人資料。下述幾種特殊情況不受此限：</p>
+          <ol>
+            <li>基於法律之規定。</li>
+            <li>受司法機關或其他有權機關基於法定程序之要求。</li>
+            <li>為保障CAMPION之財產及權益。</li>
+            <li>在緊急情況下為維護其他會員或第三人之人身安全。</li>
+          </ol>
+        </blockquote>
+        <h3>會員的義務與責任</h3>
+        <blockquote>
+          <p>會員對本身於CAMPION或透過CAMPION傳輸的一切內容自負全責:</p>
+          <ol>
+            <li>會員承諾遵守中華民國相關法規及一切國際網際網路規定與慣例。</li>
+            <li>會員同意並保證不公布或傳送任何毀謗、不實、威脅、不雅、猥褻、不法、攻擊性、毀謗性或侵害他人智慧財產權的文字，圖片或任何形式的檔案於CAMPION上。</li>
+            <li>非經CAMPION書面同意，會員不得於CAMPION上從事廣告或販賣商品行為。</li>
+            <li>會員同意避免在公眾討論區討論私人事務，發表文章時，請尊重他人的權益及隱私權。</li>
+            <li>會員同意必須充份尊重著作權，禁止發表侵害他人各項智慧財產權之文字、圖片或任何形式的檔案。</li>
+          </ol>
+        </blockquote>
+        <h3>智慧財產權</h3>
+        <blockquote>
+          <ol>
+            <li>CAMPION
+              所使用之軟體或程式(以下簡稱軟體)、網站上所有內容，包括但不限於著作、圖片、檔案、資訊、資料、網站架構、網站畫面的安排、網頁設計、會員內容等，均由本公司或其他權利人依法擁有其智慧財產權，包括但不限於商標權、專利權、著作權、營業秘密與專有技術等。任何人不得逕自使用、修改、重製、公開播送、公開傳輸、公開演出、改作、散布、發行、公開發表、進行還原工程、解編或反向組譯。若會員欲引用或轉載前述軟體、程式或網站內容，除明確為法律所許可者外，必須依法取得本公司或其他權利人的事前書面同意。
+            </li>
+            <li>CAMPION 為本公司行銷宣傳本服務之商標，依其註冊或使用之狀態，受商標法及公平交易法等之保護，未經本公司事前書面同意，任何人不得以任何方式使用 CAMPION商標。</li>
+          </ol>
+        </blockquote>
+        <h3>禁止從事違反法律規定之行為</h3>
+        <blockquote>
+          <p>
+            CAMPION就會員的行為是否符合會員規範有最終決定權。若CAMPION決定會員的行為違反本會員規範或任何法令，會員同意CAMPION得隨時停止帳號使用權或清除帳號，並停止使用CAMPION。會員在違反法律規定之情事，應自負法律責任。
+          </p>
+        </blockquote>
+
+        <h3>保管及通知義務</h3>
+        <blockquote>
+          <p>
+            您有責任維持密碼及帳號的機密安全。您必須完全負起因利用該密碼及帳號所進行之一切行動之責任。當密碼或帳號遭到未經授權之使用，或發生其他任何安全問題時，您必須立即通知CAMPION，每次您連線完畢，均要結束您的帳號使用。因您未遵守本項約定所生之任何損失或損害，我們將無法亦不予負責。
+          </p>
+        </blockquote>
+        <h3>特別同意事項</h3>
+        <blockquote>
+          <p>您同意於CAMPION所發表之一切內容僅代表您個人之立場與行為，並同意承擔所有相關衍生之責任，CAMPION不負任何責任。</p>
+          <p>您同意，CAMPION 可以透過您所提供的Email和您取得聯絡，並提供相關課程的資訊給您。</p>
+        </blockquote>
+        <h3>擔保責任免除</h3>
+        <blockquote>
+          <ol>
+            <li>
+              CAMPION保留隨時停止、更改各項服務內容或終止任一會員帳號使用之權利，無需事先通知會員本人。無論任何情形，就停止或更改服務或終止會員帳號使用所可能產生之困擾、不便或損害，CAMPION對任何會員或第三人均不負任何責任。
+            </li>
+            <li>CAMPION保留將來新增、修改或刪除各項服務之全部或一部之權利，且不另行個別通知會員不得因此而要求任何補償或賠償。</li>
+            <li>CAMPION提供之特定服務可能存在專屬之服務條款，在此情形下，雙方權利義務將依據該服務之專屬條款決定之。</li>
+          </ol>
+        </blockquote>
+        <h3>損害賠償</h3>
+        <blockquote>
+          <p>
+            因會員違反相關法令或違背本同意書之任一條款，致CAMPION或其關係企業、受僱人、受託人、代理人及其他相關履行輔助人因而受有損害或支出費用（包括且不限於因進行民事、刑事及行政程序所支出之律師費用）時，會員應負擔損害賠償責任或填補其費用。
+          </p>
+          <h3>會員規範之修改</h3>
+          <p>
+            CAMPION保留隨時修改本會員規範之權利，CAMPION將於修改會員規範時，於WEB首頁公告修改之內容，而不另對會員作個別通知。若會員不同意修改的內容，請勿繼續使用CAMPION。如果會員繼續使用CAMPION，將視為會員已同意並接受本規範等增訂或修改內容之約束。
+          </p>
+        </blockquote>
+        <h3>個別條款之效力</h3>
+        <blockquote>
+          <p>本同意書所定之任何會員條款之全部或一部無效時，不影響其他條款之效力。</p>
+        </blockquote>
+        <h3>準據法及管轄法院</h3>
+        <blockquote>
+          <p>本同意書之解釋及適用以及會員因使用本服務而與CAMPION間所生之權利義務關係，應依中華民國法令解釋適用之。其因此所生之爭議，以臺灣臺北地方法院為第一審管轄法院。</p>
+        </blockquote>
+      </div>
+    </div>
+  </div>
+
+  <section class="memberSignIn_container">
+    <div class="memberSignIn_banner">
+      <img src="./images/member/logo.png" alt="" class="memberSignIn_logo rounded mx-auto d-block" />
+      <h1 class="memberSignIn_title text-center">註冊會員</h1>
+      <form action="./Frontend/join.php" method="post">
+        <label>會員帳號</label>
+        <br />
+        <input type="email" required placeholder="請輸入您的Email" id="ACCOUNT" name="ACCOUNT" size="40" value="" />
+        <br />
+        <label>設定會員密碼</label>
+        <br />
+        <input type="password" pattern="^(?=.*[a-zA-Z])(?=.*[0-9]).{6,16}$" required="required"
+          oninput="setCustomValidity('');" oninvalid="setCustomValidity('請輸入正確的密碼格式:含英數至少六個字元');"
+          placeholder="請輸入密碼（數字+英文字母6-16位）" id="PASSWORD" name="PASSWORD" size="40" value="" />
+        <br />
+        <label>再次確認會員密碼</label>
+        <br />
+        <input type="password" pattern="^(?=.*[a-zA-Z])(?=.*[0-9]).{6,16}$" required="required"
+          oninput="setCustomValidity('');"
+          onchange="if(document.getElementById('PASSWORD').value != document.getElementById('PASSWORD2').value){setCustomValidity('密碼驗證錯誤');}"
+          placeholder="請再次輸入密碼" id="PASSWORD2" name="PASSWORD" size="40" value="" />
+        <br />
+        <label>會員姓名</label>
+        <br />
+        <input type="text" placeholder="請輸入您的姓名" size="40" id="NAME" name="NAME" value="" />
+        <br />
+        <label>性別</label>
+        <br />
+        <input type="radio" name="GENDER" id="member_first" value="男" />
+        <label for="member_first">男性</label>
+        <input type="radio" name="GENDER" id="member_second" value="女" />
+        <label for="member_second">女性</label>
+        <input type="radio" name="GENDER" id="member_third" value="暫不提供" />
+        <label for="member_third">暫不提供</label>
+        <br />
+        <label>行動電話</label>
+        <br />
+        <input type="text" required="required" maxlength="10" pattern="09\d{2}\d{6}" placeholder="請輸入您的行動電話"
+          name="PHONE" size="40" value="" />
+        <br />
+        <input type="checkbox" onclick="if (this.checked) {enable()} else {disable()}" id="memberSignIn_Privacy" />
+        <label for="memberSignIn_Privacy">我已閱讀並同意<a class="memberSignIn_right">CAMPION使用權益</a></label>
+        <br />
+        <input type="submit" disabled="true" class="memberSignIn_confirm" id="memberSignIn_confirm" value="註冊" />
+      </form>
+      <h4 class="memberSignIn_word text-center">
+        已經是會員?<a href="member_signIn.html" class="memberSignIn_signInButton">登入</a>
+      </h4>
+    </div>
+
+    
+  </section>
+  <footer>
+    <div class="footer_container">
+      <ul class="footer_list">
+        <li><a href="./news.html">最新消息</a></li>
+        <li><a href="./summer_camp.html">冬夏令營</a></li>
+        <li><a href="./local_theme.html">當地主題</a></li>
+        <li><a href="./ideas.html">獲得靈感</a></li>
+        <li><a href="./aboutus.html">品牌故事</a></li>
+        <li><a href="./faq.html">常見問題</a></li>
+        <li><a href="./member_signIn.html">會員專區</a></li>
+      </ul>
+      <ul class="footer_contact">
+        <li>聯絡我們</li>
+        <li>campion_service@gmail.com</li>
+        <li>02 2712 0589</li>
+        <li>104506台北市中山區南京東路三段219號5樓</li>
+      </ul>
+      <div class="footer_subscribe">
+        <p>訂閱我們</p>
+        <p>隨時取得冬夏令營資訊</p>
+        <div class="footer_subscribe_mail">
+          <input type="text" placeholder="Your email" style="padding: 8px" />
+          <div class="btn footer_btn">訂閱</div>
+        </div>
+      </div>
+    </div>
+    <hr class="hr-solid" />
+    <div class="footer_tibame">
+      本網站為緯育TibaMe前端設計工程師班第72期第二組學員專題成果作品，本平台僅供學習、展示之用。參考資源：＿＿＿＿＿＿＿＿。
+    </div>
+  </footer>
+
+  <script>
+    // 設定當前頁面 css：桌機版 header
+    let page = document.getElementsByClassName("header_pg");
+    for (let i = 0; i < page.length; i++) {
+      if (page[i].id !== "page_active7") {
+        page[i].removeAttribute("id");
+      }
+    }
+    // 設定當前頁面 css：漢堡選單
+    let ham_page = document.getElementsByClassName("ham_pg");
+    for (let i = 0; i < ham_page.length; i++) {
+      if (ham_page[i].id !== "h_page_active7") {
+        ham_page[i].removeAttribute("id");
+      }
+    }
+
+    // 驗證帳號密碼是否錯誤
+    const verifyACCOUNT = document.getElementById('ACCOUNT');
+    // console.log(verify)
+    verifyACCOUNT.addEventListener('input', function () {
+      if (verifyACCOUNT.checkValidity()) {
+        verifyACCOUNT.classList.add('valid')
+        verifyACCOUNT.classList.remove('invalid')
+      } else {
+        verifyACCOUNT.classList.remove('valid')
+        verifyACCOUNT.classList.add('invalid')
+      }
+    });
+
+    const verifyPassword = document.getElementById('PASSWORD');
+    // console.log(verifyPassword)
+    verifyPassword.addEventListener('input', function () {
+      if (verifyPassword.checkValidity()) {
+        verifyPassword.classList.add('valid')
+        verifyPassword.classList.remove('invalid')
+      } else {
+        verifyPassword.classList.remove('valid')
+        verifyPassword.classList.add('invalid')
+      }
+    });
+
+    const verifyPasswords = document.getElementById('PASSWORD2');
+    // console.log(verifyPassword)
+    verifyPasswords.addEventListener('input', function () {
+      if (verifyPasswords.checkValidity()) {
+        verifyPasswords.classList.add('valid')
+        verifyPasswords.classList.remove('invalid')
+      } else {
+        verifyPasswords.classList.remove('valid')
+        verifyPasswords.classList.add('invalid')
+      }
+    });
+
+    function disable() {
+      document.getElementById("memberSignIn_confirm").disabled = true;
+      let registerBtn = document.getElementsByClassName("memberSignIn_confirm")[0];
+      registerBtn.style.backgroundColor = "#ccc";
+      registerBtn.style.cursor = "inherit";
+    }
+    function enable() {
+      document.getElementById("memberSignIn_confirm").disabled = false;
+      let registerBtn = document.getElementsByClassName("memberSignIn_confirm")[0];
+      registerBtn.style.backgroundColor = "#01B3A7";
+      registerBtn.style.cursor = "pointer";
+    }
+
+
+
+    let dies = document.querySelector('.memberSignIn_right');
+    dies.addEventListener('click', function () {
+      let diess = document.querySelector('.memberSignIn_text_bg');
+      diess.classList.add("memberSignIn_right_die");
+    });
+
+    let close = document.querySelector('.memberSignIn_center_X');
+    close.addEventListener('click', function () {
+      let closes = document.querySelector('.memberSignIn_text_bg');
+      closes.classList.remove("memberSignIn_right_die");
+    })
+
+  </script>
+</body>
+
+</html>

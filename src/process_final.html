@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+
+<head>
+    @@include('./layout/meta.html', {
+    "title" : "訂單確認"
+    })
+    @@include('./layout/chat.html')
+    <script src="./js/vue.js"></script>
+    <!-- <script src="js/vue.min.js"></script> -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.24.0/axios.min.js"></script>
+    <script>
+        function init() {
+            loginCheck();
+        }
+
+        // ===== 登入檢查 ===== //
+        function loginCheck(){    
+            $.ajax({            
+                method: "POST",
+                url: "./Frontend/LoginCheck.php",
+                data:{},            
+                dataType: "text",
+                success: function (response) {
+                    if(response == ""){
+                        //尚未登入->前往登入頁
+                        alert('請先登入，將前往登入頁'); 
+                        location.href = './member_signIn.html';
+                    }else{
+                        showMember();
+                    }              
+                },
+                error: function(exception) {
+                    alert("數據載入失敗: " + exception.status);
+                }
+            });
+        }
+
+        // 顯示會員資訊
+        function showMember() {
+            $.ajax({
+                method: "POST",
+                url: "./Frontend/Member.php",
+                data: {},
+                dataType: "text",
+                success: function (response) {
+                    $('.guest_icon').css('display', 'none');
+                    $('.icon_create').after(response);
+                },
+                error: function (exception) {
+                    alert("數據載入失敗: " + exception.status);
+                },
+            });
+        }
+        // 顯示會員資訊結束
+
+    </script>
+</head>
+
+<body onload="init()">
+    @@include('./layout/header.html')
+    
+    <section class="processFinal_buyItem" >
+        <div class="processFinal_ballAll container">
+            <div class="processFinal_ballName">
+                <div class="processFinal_ball">1</div>
+                <p>訂單資料</p>
+            </div>
+            <i class="bi bi-arrow-right"></i>
+            <div class="processFinal_ballName">
+                <div class="processFinal_ball">2</div>
+                <p>付款資訊</p>
+            </div>
+            <i class="bi bi-arrow-right"></i>
+            <div class="processFinal_ballName">
+                <div class="processFinal_ball ball">3</div>
+                <p>訂單確認</p>
+            </div>
+        </div>
+        <div id="appOrder">
+            <order_ckeck></order_ckeck>
+        </div> 
+    </section>
+    @@include('./layout/footer.html')
+
+    <script>
+        // 設定當前頁面 css：桌機版 header
+        let page = document.getElementsByClassName("header_pg");
+        for (let i = 0; i < (page.length); i++) {
+            if (page[i].id !== "page_active0") {
+                page[i].removeAttribute('id');
+            }
+        }
+        // 設定當前頁面 css：漢堡選單
+        let ham_page = document.getElementsByClassName("ham_pg");
+        for (let i = 0; i < (ham_page.length); i++) {
+            if (ham_page[i].id !== "h_page_active0") {
+                ham_page[i].removeAttribute('id');
+            }
+        }
+
+        Vue.component('order_ckeck',{
+            data(){
+                return{
+                    lineitems: [],
+                    members:[],
+                    paychoose: sessionStorage.getItem('pay_choose'),
+                    getOrderID: 0,
+                    newOrderID: 0
+                }
+            },
+            template:`
+                <article>
+                    <div class="processFinal_container container" style="margin-bottom: 50px;">
+                        <div class="orderModal-overlay" style="display:none;">
+                            <div class="orderModalBody">
+                                <div class="orderModalHeader">
+                                    <div class="orderModalTitle">
+                                        <br>
+                                    </div>
+                                    <a href="./member.html">
+                                        <button type="button" class="orderModalButtonClose">×</button>
+                                    </a>
+                                </div>
+                                <div class="orderModalContent">
+                                    感謝您的訂購，您的訂單已確認！<br>
+                                    系統將會發送「旅客填寫資料」與「訂單明細」相關信件至您的 E-mail 信箱，敬請至您的信箱確認查收，後續行程相關事宜將由專屬的客服專員與您聯繫服務。如您有任何問題，敬請洽詢您的客服專員。<br>
+                                </div>
+                                <div class="orderModalContent">
+                                    貼心提醒：若您使用免費信箱，可能會將信件誤判為垃圾郵件，您若沒收到相關信件，可至垃圾郵件搜尋。
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row" v-for="item in lineitems" style="margin-bottom:45px;">
+                            <div class="processFinal_image col-md-5">
+                                <img :src="'./images/summer_camp/' + item.IMG" alt="" style="max-width:100%;">
+                            </div>
+    
+                            <div class="processFinal_content col-md-7">
+                                <div class="processFinal_nameItemAll">
+                                    <h1 class="processFinal_title">【{{ item.COUNTRY }}-{{ item.CITY }}】{{ item.NAME }}</h1>
+                                </div>
+                                <div class="processFinal_dateWeek">
+                                    <h4 class="processFinal_orderWord"><i class="bi bi-calendar-fill"></i>{{ item.BATCH }}：{{item.START_DATE}}～{{item.END_DATE}}</h4>
+                                    <!-- <h4 class="processFinal_orderWord"><i class="bi bi-file-text-fill"></i>訂單編號:A2154879</h4> -->
+                                    <h4 class="processFinal_orderWord"><i class="bi bi-person-fill"></i>人數：{{item.ATTENDEES}}人</h4>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="processFinal_ItemAll container">
+                            <div class="row">
+                                <div class="processFinal_Item col-md-12">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <p class="OrderName"></p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="processFinal_Item col-md-12">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <p class="OrderPhone"></p>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <p class="OrderEmail"></p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="processFinal_Item col-md-12">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <p>付款方式: {{paychoose}}</p>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <p>訂單金額：TWD {{ parseInt(total).toLocaleString()}}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="processFinal_numberAll">
+                            <p class="OrderName"></p>
+                            <p class="OrderPhone"></p>
+                            <p class="OrderEmail"></p>
+                            <p>付款方式： {{paychoose}}</p>
+                            <p>訂單金額：TWD {{ parseInt(total).toLocaleString()}}</p>
+                        </div>
+                    </div>
+                    <div class="processFinal_btn text-center" style="display: flex; justify-content:space-evenly; align-items: center; padding-bottom: 50px;">
+                        <button class="btn_sub" @click="CancelPay">取消</button>
+                        <button class="btn_sub" @click="OrderSent">完成訂單</button>
+                    </div>
+                </article>
+            `,
+            methods:{
+                // ==== 取消購買 ==== //
+                CancelPay(){
+                    console.log(this.cart_update);
+                    if(confirm("確定取消?")){
+                        this.lineitems.forEach((v, k) => {
+                            console.log(v.ID);
+                            // 更新購物車資料
+                            axios.get('./Frontend/processCancelUpdate.php',{
+                                params: {
+                                    CartID: v.ID,
+                                },
+                            })
+                            .then((res) => {
+                                // console.log(res.data);
+                            })
+                            .catch((error) => console.log(error));                                                      
+                        });
+                        sessionStorage.clear();
+                        alert("取消成功!");
+                        location.href = "./cart.html";
+                    }
+                },
+
+                // ===== 送出訂單 ===== //
+                OrderSent(){
+                    let lineitems = this.lineitems;
+                    let paychoose = this.paychoose;
+                    let total = this.total;
+                    // let newOrderID = this.newOrderID;
+                    // console.log(newOrderID);
+                    $.ajax({
+                        method: "POST",
+                        url: "./Frontend/OrderSentInsert.php",
+                        data: {
+                            lineitems: lineitems,
+                            total: total,
+                            paychoose: paychoose,
+                            // newOrderID: newOrderID
+                        },
+                        dataType: "text",
+                        success: function (response) {
+                            // console.log(response);
+                            $('.orderModal-overlay').css('display', 'block');
+                        },
+                        error: function (exception) {
+                            alert("數據載入失敗: " + exception.status);
+                        },
+                    });
+                }
+            },
+            computed: {
+                // ===== 訂單總額 ===== //
+                total() {
+                    let total = 0;
+                    this.lineitems.forEach((v, k) => {
+                        total += v.ATTENDEES * v.PRICE;                               
+                    });
+                    return total;
+                },
+            },
+            mounted(){
+                // ======= 取得訂單資訊 ====== //
+                axios.get('./Frontend/getProcess.php')
+                    .then((res) => {
+                        // console.log(res.data);
+                        this.lineitems = res.data;
+                    }) 
+                    .catch((error) => console.log(error));
+
+                // ======= 取得訂單會員資訊 ====== //
+                axios.get('./Frontend/getSyncMember.php')
+                .then((res) => {
+                    // console.log(res.data);
+                    this.members = res.data;
+                    $('.OrderName').html(`訂購人姓名： ${this.members[0]['NAME']}`);
+                    $('.OrderPhone').html(`訂購人電話： ${this.members[0]['PHONE']}`);
+                    $('.OrderEmail').html(`訂購人信箱： ${this.members[0]['ACCOUNT']}`);
+                    
+                    $('.orderModalTitle').html(`親愛的 ${this.members[0]['NAME']} 會員您好：`);                 
+                }) 
+                .catch((error) => console.log(error));
+                
+                // ======= 透過總訂單筆數+1，取得訂單新ID ====== //
+                // axios.get('./Frontend/getOrderID.php')
+                // .then((res) => {
+                //     // console.log(res.data);
+                //     this.getOrderID = res.data[0][0];
+                //     this.newOrderID = parseInt(this.getOrderID) + 1;
+                //     // console.log(this.newOrderID);    
+                // }) 
+                // .catch((error) => console.log(error));
+            },
+        });
+
+
+        const vm = new Vue({
+            el: '#appOrder',
+            data:{
+
+            },
+        });
+    </script>
+</body>
+
+</html>

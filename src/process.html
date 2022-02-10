@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    @@include('./layout/meta.html', {
+    "title" : "訂單資料" 
+    }) 
+    @@include('./layout/chat.html')
+    <script src="./js/vue.js"></script>
+    <!-- <script src="js/vue.min.js"></script> -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.24.0/axios.min.js"></script>
+    <script>
+    function init(){
+        loginCheck();
+    }
+  
+    // ===== 登入檢查 ===== //
+    function loginCheck(){    
+        $.ajax({            
+            method: "POST",
+            url: "./Frontend/LoginCheck.php",
+            data:{},            
+            dataType: "text",
+            success: function (response) {
+                if(response == ""){
+                    //尚未登入->前往登入頁
+                    alert('請先登入，將前往登入頁'); 
+                    location.href = './member_signIn.html';
+                }else{
+                    showMember();
+                }              
+            },
+            error: function(exception) {
+                alert("數據載入失敗: " + exception.status);
+            }
+        });
+    }
+ 
+    // 顯示會員資訊
+    function showMember() {
+        $.ajax({
+            method: "POST",
+            url: "./Frontend/Member.php",
+            data: {},
+            dataType: "text",
+            success: function (response) {
+                $('.guest_icon').css('display', 'none');
+                $('.icon_create').after(response);
+            },
+            error: function (exception) {
+                alert("數據載入失敗: " + exception.status);
+            },
+        });
+    }
+    // 顯示會員資訊結束
+  
+</script>
+</head>
+<body onload="init()">
+    @@include('./layout/header.html')
+    <section class="process_buyItem">
+        <div class="process_ballAll container">
+            <div class="process_ballName">
+                <div class="process_ball  ball">1</div>
+                <p>訂單資料</p>
+            </div>
+            <i class="bi bi-arrow-right"></i>
+            <div class="process_ballName">
+                <div class="process_ball">2</div>
+                <p>付款資訊</p>
+            </div>
+            <i class="bi bi-arrow-right"></i>
+            <div class="process_ballName">
+                <div class="process_ball">3</div>
+                <p>訂單確認</p>
+            </div>
+        </div>
+
+        <div id="process">
+            <!-- :memberName = "memberName" -->
+            <cart_list @cart-update="getValFromChild"></cart_list>
+            <buy_item @pay-choose="getPayChoose"></buy_item>
+            <div class="container">
+                <div class="process_btnAll text-center">
+                    <button class="btn_sub" @click="CancelPay">取消</button>
+                    <button class="process_nextStep btn_sub" @click="NextProcess">下一步</button>
+                </div>
+            </div>
+        </div>        
+        
+    </section>
+    @@include('./layout/footer.html')
+
+    <script>
+        // 設定當前頁面 css：桌機版 header
+        let page = document.getElementsByClassName("header_pg");
+        for(let i = 0; i < (page.length); i++){
+            if(page[i].id !== "page_active0"){
+                page[i].removeAttribute('id');
+            }
+        }
+        // 設定當前頁面 css：漢堡選單
+        let ham_page = document.getElementsByClassName("ham_pg");
+        for(let i = 0; i < (ham_page.length); i++){
+            if(ham_page[i].id !== "h_page_active0"){
+                ham_page[i].removeAttribute('id');
+            }
+        }
+
+        // 購買清單
+        Vue.component('cart_list', {
+            data(){
+                return {
+                    purchase_list: [],
+                    count: 0
+                };
+            },
+            template:`
+                <div class="process_buyItemAll container">
+                    <h1 class=process_buyItemAllTitle>本次購買行程</h1>
+                    <hr>
+                    <div class="row" v-for="purchase in purchase_list" style="margin-bottom: 50px">
+                        <div class="process_buyImage col-md-5">
+                            <img :src="'./images/summer_camp/' + purchase.IMG" alt="">
+                        </div>
+                        <div class="process_buyWordAll col-md-7">
+                            <div class="process_buyWordTitle">
+                                <h1 style="margin-bottom:20px;">【{{ purchase.COUNTRY }}-{{ purchase.CITY }}】{{ purchase.NAME }}</h1>
+                            </div>
+                            <p class="process_buyWordContent">{{ purchase.CONTEXT }}</p>
+            
+                            <div class="process_buyWordIcon">
+                                <p><i class="bi bi-calendar2-check-fill"></i>{{ purchase.BATCH }}</p>
+                                <p>單價：{{parseInt(purchase.PRICE).toLocaleString()}}</p>
+                                <p>人數：{{purchase.ATTENDEES}}人</p>
+                            </div>
+                            <div class="process_price text-end">
+                                <p style="font-size: 16px;">總計：TWD {{ (parseInt(purchase.PRICE) * parseInt(purchase.ATTENDEES)).toLocaleString() }}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div style="text-align:right;">
+                        <span class="cart_priceTitle" style="margin-right: 10px;">共{{count}}件商品</span>
+                        <span style="font-size: 18px; font-weight:bold;">訂單金額：TWD {{ parseInt(total).toLocaleString()}}</span>
+                    </div>
+                </div>
+            `,
+            method:{
+                
+            },
+            computed: {
+                total() {
+                    let total = 0;
+                    this.purchase_list.forEach((v, k) => {
+                        total += v.ATTENDEES * v.PRICE;                               
+                    });
+                    
+                    // 總筆數
+                    this.count = this.purchase_list.length;
+                    sessionStorage.setItem('total_amount', total);
+
+                    return total;
+                }
+            },
+            mounted() {
+                axios.get('./Frontend/getProcess.php')
+                    .then((res) => {
+                        console.log(res.data);
+                        this.purchase_list = res.data;
+                        this.$emit("cart-update", this.purchase_list);
+                    }) 
+                    .catch((error) => console.log(error));
+            },
+        });
+
+        // 購買填寫資訊
+        Vue.component('buy_item', {
+            data(){
+                return{
+                    members: [],
+                    isSyncMember: false,
+                    pays: [
+                        {way: '信用卡付款'},
+                        {way: '轉帳付款'}
+                    ]
+                };
+            },
+            template: `
+                <div class="process_buyItemAll container">
+                    <h1 class="process_buyItemAllTitle">訂購人資料</h1>
+                    <hr>
+                    <form class="row g-3 needs-validation" novalidate>
+                        <div class="process_buyItemAllLength col-md-6">
+                            <label for="validationCustom01" class="form-label">名字</label>
+                            <input type="text" class="form-control" id="validationCustom01" required>
+                            <div class="valid-feedback">
+                                Looks good!
+                            </div>
+                        </div>
+                        
+                        <div class="process_buyItemAllLength col-md-6">
+                            <label for="validationCustom03" class="form-label">聯絡電話</label>
+                            <input type="text" class="form-control" id="validationCustom02" required>
+                            <div class="invalid-feedback">
+                                Please provide a valid city.
+                            </div>
+                        </div>
+                        
+                        <div class="process_buyItemAllLength col-md-6">
+                            <label for="validationCustom03" class="form-label">電子信箱</label>
+                            <input type="text" class="form-control" id="validationCustom03" required>
+                            <div class="invalid-feedback">
+                                Please provide a valid city.
+                            </div>
+                        </div>
+
+                        <div class="process_buyItemAllLength col-md-6">
+                            <label for="inputState" class="form-label">付款方式</label>
+                            <select id="inputState" class="form-select" @change="PayChoose">
+                                <option disabled>選擇付款方式</option>
+                                <option v-for="(pay ,index) in pays">{{pay.way}}</option>
+                            </select>
+                        </div>
+
+                        <div class="col-12">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="invalidCheck" :checked="isSyncMember" @click="SyncMember">
+                                <label class="form-check-label" for="invalidCheck">
+                                    同步會員資料
+                                </label>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+                
+            `,
+            
+            methods: {
+                // ===== 同步會員資料 ===== //
+                SyncMember(event){
+                    if(event.currentTarget.checked){
+                        $.ajax({
+                            method: "POST",
+                            url: "./Frontend/getSyncMember.php",
+                            data: {},
+                            dataType: "json",
+                            success: function (response) {
+                                console.log(response);
+                                $('#validationCustom01').val(response[0]['NAME']);
+                                $('#validationCustom02').val(response[0]['PHONE']);
+                                $('#validationCustom03').val(response[0]['ACCOUNT']);
+                            },
+                            error: function (exception) {
+                                alert("數據載入失敗: " + exception.status);
+                            },
+                        });
+                    }else{
+                        this.members = [];
+                        $('#validationCustom01').val('');
+                        $('#validationCustom02').val('');
+                        $('#validationCustom03').val('');
+                    }
+                },
+
+                // ===== 付款方式存入session ==== //
+                PayChoose(e){
+                    let choose = e.target.value;
+                    this.$emit("pay-choose", choose);
+                    sessionStorage.setItem('pay_choose', choose);
+                },
+            },
+        });
+
+        const vm = new Vue({
+            el: '#process',
+            data: {
+                cart_update: [],
+                paychoose: ''
+            },
+            methods:{
+                // 抓取清單組件傳值
+                getValFromChild(val){
+                    this.cart_update = val;
+                },
+
+                // 抓取付款資料組件傳值
+                getPayChoose(val){
+                    this.paychoose = val;
+                },
+
+                // ===== 取消付款流程 ====== //
+                CancelPay(){
+                    console.log(this.cart_update);
+                    if(confirm("確定取消?")){
+                        this.cart_update.forEach((v, k) => {
+                            console.log(v.ID);
+                            // 更新購物車資料
+                            axios.get('./Frontend/processCancelUpdate.php',{
+                                params: {
+                                    CartID: v.ID,
+                                },
+                            })
+                            .then((res) => {
+                                // console.log(res.data);
+                            })
+                            .catch((error) => console.log(error));                                                      
+                        });
+                        sessionStorage.clear();
+                        alert("取消成功!");
+                        location.href = "./cart.html";
+                    }
+                },
+            
+                // ===== 選擇付款流程 ====== //
+                NextProcess(){
+                    // let pay = sessionStorage.getItem('pay_choose');
+                    if(this.paychoose == '轉帳付款'){
+                        location.href = "./process_final.html";
+                    }else if(this.paychoose == '信用卡付款'){
+                        location.href = "./process_next.html";
+                    }else{
+                        alert('請選擇付款方式');
+                    }
+                    // console.log(this.paychoose);
+                }
+            },
+        });
+
+    
+    </script>
+</body>
+</html>

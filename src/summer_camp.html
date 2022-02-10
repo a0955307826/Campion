@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+  <head>
+    @@include('./layout/meta.html', { "title" : "夏令營 Summer Camp" })
+    @@include('./layout/chat.html')
+
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-/bQdsTh/da6pkI1MST/rWKFNjaCP5gBSY4sEBT38Q/9RBh9AH40zEOg7Hlq2THRZ"
+      crossorigin="anonymous"
+    ></script>
+    <script src="./js/vue.js"></script>
+    <script src="../node_modules/jquery/dist/jquery.js"></script>
+    <script>
+      function init() {
+        showMember();
+      }
+      let memberClicked;
+
+      // 顯示會員資訊
+      function showMember() {
+        $.ajax({
+          method: "POST",
+          url: "./Frontend/Member.php",
+          data: {},
+          dataType: "text",
+          success: function (response) {
+            $(".guest_icon").css("display", "none");
+            $(".icon_create").after(response);
+          },
+          error: function (exception) {
+            alert("數據載入失敗: " + exception.status);
+          },
+        });
+      }
+      // 顯示會員資訊結束
+    </script>
+  </head>
+
+  <body onload="init()">
+    @@include('./layout/header.html')
+    <!-- summer-image -->
+    <div class="change-baner bannerr -onn">
+      <div class="scope">
+        <div class="summercamp">
+          <span class="summercamp-summer">夏令營</span>
+          <br />
+          <span class="summercamp-camp">CAMP</span>
+        </div>
+        <div class="bg-gray">
+          <span class="bg-text"
+            >選擇 Campion 海外夏令營，度過一個開心而又有教育意義的暑假。<br />
+            提前讓孩子體驗異國生活，培養獨立性，同時建立文化交流的視野，<br />
+            看待世界的眼光更加寬廣！
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 內容 -->
+    <div class="container-fluid" id="app"></div>
+
+    @@include('./layout/footer.html')
+
+    <script>
+      Vue.component("card", {
+        data() {
+          return {
+            data: [],
+            dataHeart: [],
+          };
+        },
+        props: {
+          memberClicked: {
+            type: Array,
+          },
+          card_item: {
+            type: Array,
+          },
+        },
+
+        template: `
+          <div class="row justify-content-start sw-row" align-items-start style="margin-bottom: 30px">
+            <div v-for="(item, index) in card_item" class="card" style="width: 18rem; cursor: pointer" >
+              <i :class="{fas: true, 'fa-heart': true, fav_heart: true, 'summer-camp-favorite': isCliked(item.ID)}" @click="favorite(index)"></i>
+              <div @click="getStorage(index)">
+                <img :src= "'./images/summer_camp/' + item.IMG" class="card-img-top"/>
+                <div class="card-body">
+                <h5 class="card-title">
+                【{{item.COUNTRY}}-{{item.CITY}}】<br>
+                {{item.NAME}}
+                </h5>
+                <hr style="border: 0.5px solid #000000" />
+                <p class="card-text">
+                {{checkTitle(item.CONTEXT)}}...
+                </p>
+                <a class="a">
+                  Learn more 
+                  <img src="./images/summer_camp/icon.png"/>
+                </a>
+                </div>
+                <div style="opacity: 0;">{{item.THEME}}</div>
+                <div style="opacity: 0;">{{item.AGE}}</div>
+              </div>
+            </div>
+          </div>
+			`,
+        methods: {
+          checkTitle(theTitle) {
+            return theTitle.slice(0, 40); // 只取40個字，以免破版
+          },
+          getStorage(index) {
+            // alert(index);
+            // localStorage.setItem("product_NAME", JSON.stringify(this.data[index]['NAME'])) ;
+            localStorage.setItem(
+              "getID",
+              JSON.stringify(this.card_item[index]["ID"])
+            );
+            // location.href = `./schedule.html`;
+            location.href = `./schedule.html?id=${this.card_item[index]["ID"]}`;
+          },
+          isCliked(id) {
+            // console.log(id);
+            // let arr = [];
+            // this.memberClicked.sort();
+            // console.log( this.memberClicked);
+            let clicked = false;
+
+            if (this.memberClicked) {
+              for (let i = 0; i < this.memberClicked.length; i++) {
+                console.log(Number(this.memberClicked[i].ITINERARY_NUMBER));
+                if (
+                  Number(this.memberClicked[i].ITINERARY_NUMBER) === Number(id)
+                ) {
+                  clicked = true;
+                  break;
+                }
+              }
+            }
+
+            return clicked;
+          },
+
+          favorite(index) {
+            let cardItem = this.card_item;
+            $.ajax({
+              method: "POST",
+              url: "./Frontend/LoginCheck.php",
+              dataType: "text",
+              data: {},
+              success: function (res) {
+                if (res == "") {
+                  let r = confirm("尚未登入，是否前往登入頁面");
+                  if (r == true) {
+                    window.location = "member_signIn.html";
+                  }
+                } else {
+                  let getHeart = document.getElementsByClassName("fav_heart");
+                  if (
+                    getHeart[index].classList.contains("summer-camp-favorite")
+                  ) {
+                    $.ajax({
+                      method: "POST",
+                      url: "./Frontend/summer_favorite_delete.php",
+                      dataType: "text",
+                      data: {
+                        ITINERARY_NUMBER: cardItem[index]["ID"],
+                      },
+                      success: function (res) {
+                        alert("移除收藏!!");
+                      },
+                    });
+                    getHeart[index].classList.remove("summer-camp-favorite");
+                  } else {
+                    getHeart[index].classList.add("summer-camp-favorite");
+                    localStorage.setItem("getHeart", JSON.parse(index));
+                    $.ajax({
+                      method: "POST",
+                      url: "./Frontend/summer_favorite_add.php",
+                      dataType: "text",
+                      data: {
+                        ITINERARY_NUMBER: cardItem[index]["ID"],
+                      },
+                      success: function (res) {
+                        if (res != "done") {
+                          console.log(res);
+                          alert("加入收藏!!");
+                        }
+                      },
+                    });
+                  }
+                }
+              },
+            });
+          },
+        },
+      });
+
+      // ======== 把要 render 到 DOM 的整包結構放進 template 裡面 ===========
+      // Vue2 template 一定要記得寫根節點！ <div></div>
+      let vm = new Vue({
+        el: "#app",
+        data: {
+          // new Vue 的 data 是物件
+          dataa: [],
+          interset: [],
+          changeSize: {
+            fontSize: "16px",
+            display: "inline-block",
+            color: "#A9A9A9",
+            margin: "15px 0px 15px 15px",
+            cursor: "pointer",
+          },
+
+          memberClicked,
+        },
+        computed: {
+          caculated_card() {
+            let choosed = this.interset.toString();
+            let card_list = [];
+            for (let i = 0; i < this.dataa.length; i++) {
+              if (
+                choosed.includes(this.dataa[i].COUNTRY) ||
+                choosed.includes(this.dataa[i].CITY) ||
+                choosed.includes(this.dataa[i].THEME) ||
+                choosed.includes(this.dataa[i].AGE)
+              ) {
+                card_list.push(this.dataa[i]);
+                // console.log("success")
+              } else if (choosed === "") {
+                card_list.push(this.dataa[i]);
+                // console.log("nothing")
+              }
+            }
+            return card_list;
+          },
+        },
+        methods: {
+          removeTask(index) {
+            this.interset.splice(index, 1);
+          },
+        },
+
+        mounted() {
+          continuedHeart();
+          $.getJSON("./Frontend/summer.php").then((res) => {
+            // console.log(res);
+            this.dataa = res;
+            // this.$emit('cardd_list', this.data)
+            // console.log(this.dataa);
+          });
+        },
+
+        template: `
+        <div class="row justify-content-center">
+          <div class="col-md-3 col3-aside"> <!-- aside --> 
+            <div class="camp_two">
+              <div class="camp-sw ssum camp-sw-now" >夏令營</div>
+              <a href="./winter_camp.html">
+                <div class="camp-sw wwin ssum">冬令營 
+                  <img class="arr_icon img_1" src="./images/summer_camp/akar-icons_chevron-right.png">
+                </div>
+              </a>
+            </div>
+            <div class="find-trip">Find a Trip!</div>
+            <div class="row-3">
+              <p class="col align-self-start" v-for="(ins,index) in interset" @click="removeTask(index)" :style="changeSize"> 
+                {{ins}} 
+                <img src="./images/summer_camp/×.png" style="margin: 0 3px;">
+              </p>
+            </div>
+            <hr style="border: 0.5px solid #00000000" />
+
+            <div class="accordion accordion-flush" id="accordionFlushExample">
+              <!-- 國家 -->
+              <div class="accordion-item">
+                <h2 class="accordion-header" id="flush-headingOne">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseOne" aria-expanded="false" aria-controls="flush-collapseOne">國家</button>
+                </h2>
+                <div id="flush-collapseOne" class="accordion-collapse collapse" aria-labelledby="flush-headingOne" data-bs-parent="#accordionFlushExample">
+                  <div class="accordion-body">
+                    <!-- 選單 -->
+                    <div class="form-check">
+                      <input class="form-check-input" type="checkbox" value="美國" v-model="interset" id="flexCheckDefault"/>
+                      <label class="form-check-label" for="">
+                        美國
+                      </label>
+                    </div>
+                    <div class="form-check">
+                      <input class="form-check-input" type="checkbox" value="法國" v-model="interset" id="flexCheckDefault"/>
+                      <label class="form-check-label" for="">
+                        法國
+                      </label>
+                    </div>
+                    <div class="form-check">
+                      <input class="form-check-input" type="checkbox" value="英國" v-model="interset" id="flexCheckDefault"/>
+                      <label class="form-check-label" for="">
+                        英國
+                      </label>
+                    </div>
+                    <div class="form-check">
+                      <input class="form-check-input" type="checkbox" value="加拿大" v-model="interset" id="flexCheckDefault"/>
+                      <label class="form-check-label" for="">
+                        加拿大
+                      </label>
+                    </div>
+                    <div class="form-check">
+                      <input class="form-check-input" type="checkbox" value="德國" v-model="interset" id="flexCheckDefault"/>
+                      <label class="form-check-label" for="">
+                        德國
+                      </label>
+                    </div>
+                    <div class="form-check">
+                      <input class="form-check-input" type="checkbox" value="澳洲" v-model="interset" id="flexCheckDefault"/>
+                      <label class="form-check-label" for="">
+                        澳洲
+                      </label>
+                    </div>
+                    <div class="form-check">
+                      <input class="form-check-input" type="checkbox" value="紐西蘭" v-model="interset" id="flexCheckDefault"/>
+                      <label class="form-check-label" for="">
+                        紐西蘭
+                      </label>
+                    </div>
+                    <div class="form-check">
+                      <input class="form-check-input" type="checkbox" value="瑞士" v-model="interset" id="flexCheckDefault"/>
+                      <label class="form-check-label" for="">
+                        瑞士
+                      </label>
+                    </div>
+                    <div class="form-check">
+                      <input class="form-check-input" type="checkbox" value="義大利" v-model="interset" id="flexCheckDefault"/>
+                      <label class="form-check-label" for="">
+                        義大利
+                      </label>
+                    </div>
+                    <div class="form-check">
+                      <input class="form-check-input" type="checkbox" value="西班牙" v-model="interset" id="flexCheckDefault"/>
+                      <label class="form-check-label" for="">
+                        西班牙
+                      </label>
+                    </div>
+                    <div class="form-check">
+                      <input class="form-check-input" type="checkbox" value="俄羅斯" v-model="interset" id="flexCheckDefault"/>
+                      <label class="form-check-label" for="">
+                        俄羅斯
+                      </label>
+                    </div>
+                    <div class="form-check">
+                      <input class="form-check-input" type="checkbox" value="墨西哥" v-model="interset" id="flexCheckDefault"/>
+                      <label class="form-check-label" for="">
+                        墨西哥
+                      </label>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 城市 -->
+              <div class="accordion-item">
+                <h2 class="accordion-header" id="flush-headingTwo">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseTwo" aria-expanded="false" aria-controls="flush-collapseTwo">
+                    城市
+                  </button>
+                </h2>
+                <div id="flush-collapseTwo" class="accordion-collapse collapse" aria-labelledby="flush-headingTwo" data-bs-parent="#accordionFlushExample">
+                  <div class="accordion-body">
+                    <!-- 選單 -->
+                    <div class="form-check">
+                      <input class="form-check-input" type="checkbox" value="紐約" v-model="interset" id="flexCheckDefault"/>
+                      <label class="form-check-label" for="">
+                        紐約
+                      </label>
+                    </div>
+                    <div class="form-check">
+                      <input class="form-check-input" type="checkbox" value="洛杉磯" v-model="interset" id="flexCheckDefault"/>
+                      <label class="form-check-label" for="">
+                        洛杉磯
+                      </label>
+                    </div>
+                    <div class="form-check">
+                      <input class="form-check-input" type="checkbox" value="舊金山" v-model="interset" id="flexCheckDefault"/>
+                      <label class="form-check-label" for="">
+                        舊金山
+                      </label>
+                    </div>
+                    <div class="form-check">
+                      <input class="form-check-input" type="checkbox" value="弗里多尼亞" v-model="interset" id="flexCheckDefault"/>
+                      <label class="form-check-label" for="">
+                        弗里多尼亞
+                      </label>
+                    </div>
+                    <div class="form-check">
+                      <input class="form-check-input" type="checkbox" value="費爾班克斯" v-model="interset" id="flexCheckDefault"/>
+                      <label class="form-check-label" for="">
+                        費爾班克斯
+                      </label>
+                    </div>
+                    <div class="form-check">
+                      <input class="form-check-input" type="checkbox" value="巴黎" v-model="interset" id="flexCheckDefault"/>
+                      <label class="form-check-label" for="">
+                        巴黎
+                      </label>
+                    </div>
+                    <div class="form-check">
+                      <input class="form-check-input" type="checkbox" value="霞慕尼" v-model="interset" id="flexCheckDefault"/>
+                      <label class="form-check-label" for="">
+                        霞慕尼
+                      </label>
+                    </div>
+                    <div class="form-check">
+                      <input class="form-check-input" type="checkbox" value="倫敦" v-model="interset" id="flexCheckDefault"/>
+                      <label class="form-check-label" for="">
+                        倫敦
+                      </label>
+                    </div>
+                    <div class="form-check">
+                      <input class="form-check-input" type="checkbox" value="牛津" v-model="interset" id="flexCheckDefault"/>
+                      <label class="form-check-label" for="">
+                        牛津
+                      </label>
+                    </div>
+                    <div class="form-check">
+                      <input class="form-check-input" type="checkbox" value="愛丁堡" v-model="interset" id="flexCheckDefault"/>
+                      <label class="form-check-label" for="">
+                        愛丁堡
+                      </label>
+                    </div>
+                    <div class="form-check">
+                      <input class="form-check-input" type="checkbox" value="曼徹斯特" v-model="interset" id="flexCheckDefault"/>
+                      <label class="form-check-label" for="">
+                        曼徹斯特
+                      </label>
+                    </div>
+                    <div class="form-check">
+                      <input class="form-check-input" type="checkbox" value="溫哥華" v-model="interset" id="flexCheckDefault"/>
+                      <label class="form-check-label" for="">
+                        溫哥華
+                      </label>
+                    </div>
+                    <div class="form-check">
+                      <input class="form-check-input" type="checkbox" value="基洛納" v-model="interset" id="flexCheckDefault"/>
+                      <label class="form-check-label" for="">
+                        基洛納
+                      </label>
+                    </div>
+                    <div class="form-check">
+                      <input class="form-check-input" type="checkbox" value="多倫多" v-model="interset" id="flexCheckDefault"/>
+                      <label class="form-check-label" for="">
+                        多倫多
+                      </label>
+                    </div>
+                    <div class="form-check">
+                      <input class="form-check-input" type="checkbox" value="柏林" v-model="interset" id="flexCheckDefault"/>
+                      <label class="form-check-label" for="">
+                        柏林
+                      </label>
+                    </div>
+                    <div class="form-check">
+                      <input class="form-check-input" type="checkbox" value="布里斯本" v-model="interset" id="flexCheckDefault"/>
+                      <label class="form-check-label" for="">
+                        布里斯本
+                      </label>
+                    </div>
+                    <div class="form-check">
+                      <input class="form-check-input" type="checkbox" value="凱恩斯" v-model="interset" id="flexCheckDefault"/>
+                      <label class="form-check-label" for="">
+                        凱恩斯
+                      </label>
+                    </div>
+                    <div class="form-check">
+                      <input class="form-check-input" type="checkbox" value="漢密爾頓島" v-model="interset" id="flexCheckDefault"/>
+                      <label class="form-check-label" for="">
+                        漢密爾頓島
+                      </label>
+                    </div>
+                    <div class="form-check">
+                      <input class="form-check-input" type="checkbox" value="奧克蘭" v-model="interset" id="flexCheckDefault"/>
+                      <label class="form-check-label" for="">
+                        奧克蘭
+                      </label>
+                    </div>
+                    <div class="form-check">
+                      <input class="form-check-input" type="checkbox" value="皇后鎮" v-model="interset" id="flexCheckDefault"/>
+                      <label class="form-check-label" for="">
+                        皇后鎮
+                      </label>
+                    </div>
+                    <div class="form-check">
+                      <input class="form-check-input" type="checkbox" value="日內瓦" v-model="interset" id="flexCheckDefault"/>
+                      <label class="form-check-label" for="">
+                        日內瓦
+                      </label>
+                    </div>
+                    <div class="form-check">
+                      <input class="form-check-input" type="checkbox" value="威尼斯" v-model="interset" id="flexCheckDefault"/>
+                      <label class="form-check-label" for="">
+                        威尼斯
+                      </label>
+                    </div>
+                    <div class="form-check">
+                      <input class="form-check-input" type="checkbox" value="米蘭" v-model="interset" id="flexCheckDefault"/>
+                      <label class="form-check-label" for="">
+                        米蘭
+                      </label>
+                    </div>
+                    <div class="form-check">
+                      <input class="form-check-input" type="checkbox" value="巴塞隆納" v-model="interset" id="flexCheckDefault"/>
+                      <label class="form-check-label" for="">
+                        巴塞隆納
+                      </label>
+                    </div>
+                    <div class="form-check">
+                      <input class="form-check-input" type="checkbox" value="亞拉岡" v-model="interset" id="flexCheckDefault"/>
+                      <label class="form-check-label" for="">
+                        亞拉岡
+                      </label>
+                    </div>
+                    <div class="form-check">
+                      <input class="form-check-input" type="checkbox" value="聖盧卡斯" v-model="interset" id="flexCheckDefault"/>
+                      <label class="form-check-label" for="">
+                        聖盧卡斯
+                      </label>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 主題 -->
+              <div class="accordion-item">
+                <h2 class="accordion-header" id="flush-headingThree">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseThree" aria-expanded="false" aria-controls="flush-collapseThree">
+                    主題
+                  </button>
+                </h2>
+                <div id="flush-collapseThree" class="accordion-collapse collapse" aria-labelledby="flush-headingThree" data-bs-parent="#accordionFlushExample">
+                  <div class="accordion-body">
+                    <!-- 選單 -->
+                    <div class="form-check">
+                    <input class="form-check-input" type="checkbox" value="運動" v-model="interset" id="flexCheckDefault"/>
+                    <label class="form-check-label" for="">
+                      運動
+                    </label>
+                  </div>
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" value="設計" v-model="interset" id="flexCheckChecked"/>
+                    <label class="form-check-label" for="">
+                      設計
+                    </label>
+                  </div>
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" value="科學" v-model="interset" id="flexCheckDefault"/>
+                    <label class="form-check-label" for="">
+                      科學
+                    </label>
+                  </div>
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" value="科技" v-model="interset" id="flexCheckDefault"/>
+                    <label class="form-check-label" for="">
+                      科技
+                    </label>
+                  </div>
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" value="藝術" v-model="interset" id="flexCheckDefault"/>
+                    <label class="form-check-label" for="">
+                      藝術
+                    </label>
+                  </div>
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" value="語言" v-model="interset" id="flexCheckDefault"/>
+                    <label class="form-check-label" for="">
+                      語言
+                    </label>
+                  </div>
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" value="程式" v-model="interset" id="flexCheckDefault"/>
+                    <label class="form-check-label" for="">
+                      程式
+                    </label>
+                  </div>
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" value="自然" v-model="interset" id="flexCheckDefault"/>
+                    <label class="form-check-label" for="">
+                      自然
+                    </label>
+                  </div>
+                          <div class="form-check">
+                    <input class="form-check-input" type="checkbox" value="音樂" v-model="interset" id="flexCheckDefault"/>
+                    <label class="form-check-label" for="">
+                      音樂
+                    </label>
+                  </div>
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" value="領導" v-model="interset" id="flexCheckDefault"/>
+                    <label class="form-check-label" for="">
+                      領導
+                    </label>
+                  </div>
+                          <div class="form-check">
+                    <input class="form-check-input" type="checkbox" value="商業" v-model="interset" id="flexCheckDefault"/>
+                    <label class="form-check-label" for="">
+                      商業
+                    </label>
+                  </div>
+                          <div class="form-check">
+                    <input class="form-check-input" type="checkbox" value="文化" v-model="interset" id="flexCheckDefault"/>
+                    <label class="form-check-label" for="">
+                      文化
+                    </label>
+                  </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 年齡 -->
+              <div class="accordion-item">
+                <h2 class="accordion-header" id="flush-headingFour">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseFour" aria-expanded="false" aria-controls="flush-collapsFour">
+                    年齡
+                  </button>
+                </h2>
+                <div id="flush-collapseFour" class="accordion-collapse collapse" aria-labelledby="flush-headingFour" data-bs-parent="#accordionFlushExample">
+                  <div class="accordion-body">
+                    <!-- 選單 -->
+                    <div class="form-check">
+                      <input class="form-check-input" type="checkbox" value="10歲~12歲" v-model="interset" id="flexCheckDefault"/>
+                      <label class="form-check-label" for="">
+                        10-12歲
+                      </label>
+                    </div>
+                    <div class="form-check">
+                      <input class="form-check-input" type="checkbox" value="13歲~15歲" v-model="interset" id="flexCheckChecked"/>
+                      <label class="form-check-label" for="">
+                        13-15歲
+                      </label>
+                    </div>
+                    <div class="form-check">
+                      <input class="form-check-input" type="checkbox" value="16歲~18歲" v-model="interset" id="flexCheckDefault"/>
+                      <label class="form-check-label" for="">
+                        16-18歲
+                      </label>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-9 col-sm-12 change-page">
+            <!-- main -->
+            <div id="app-summer">
+              <card :memberClicked = "memberClicked" :card_item="caculated_card"></card>
+            </div>
+            <div class="row btn_show_more">
+              <button type="submit" class="button showMore" style="margin-top: 30px">SHOW MORE</button>
+            </div>
+          </div>
+        </div>  
+        `,
+      });
+
+      // 點擊 show more 展開更多
+      $(".showMore").click(function () {
+        $("#app-summer").toggleClass("-open");
+        $(".showMore").addClass("-off");
+      });
+
+      // ===========================
+      // 設定當前頁面 css：桌機版 header
+      let page = document.getElementsByClassName("header_pg");
+      for (let i = 0; i < page.length; i++) {
+        if (page[i].id !== "page_active2") {
+          page[i].removeAttribute("id");
+        }
+      }
+      // 設定當前頁面 css：漢堡選單
+      let ham_page = document.getElementsByClassName("ham_pg");
+      for (let i = 0; i < ham_page.length; i++) {
+        if (ham_page[i].id !== "h_page_active2") {
+          ham_page[i].removeAttribute("id");
+        }
+      }
+
+      // 如果行程已被收藏，顯示紅心
+      function continuedHeart() {
+        $.ajax({
+          method: "POST",
+          url: "./Frontend/LoadMemberFav.php",
+          data: {},
+          dataType: "json",
+          success: function (res) {
+            // console.log(res);
+            vm.memberClicked = res;
+          },
+        });
+      }
+    </script>
+  </body>
+</html>

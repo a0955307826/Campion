@@ -1,0 +1,445 @@
+* {
+    box-sizing: border-box;
+  }
+  body{
+    margin: 0px;
+  }
+  
+  img{
+    max-width: 100%;
+  }
+
+
+//   =========== banner ===========
+  .local_theme_bg{
+    background-image: url("../images/summer_camp/Rectangle 260.jpg");
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+    height: 500px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .banner_test{
+    color: white;
+    font-size: $fontSize_Sub;
+    line-height: 35px;
+    letter-spacing: 3px;
+    padding: 25px 35px;
+  }
+ 
+  .local_theme_color{
+    width: 65%;
+    background-color: #FFF06666;
+    display: inline-block;
+    transform: translate(-100px,-50px);
+    // margin-left: 100px;
+  }
+  @media screen and (max-width: 1000px){
+    .local_theme_color{
+      margin-left: 120px;
+    }
+  }
+
+
+
+  // summer
+ .summer-season{
+    background-image: url("../images/summer_camp/Rectangle 281.jpg");
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+    height: 600px;
+    position: relative;
+    display: flex;
+    justify-content: space-between;
+ }
+
+  .season-gray{
+    height: 100%;
+    width: 30%;
+    background-color: #5E5E5E80;
+    display: inline-flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+  }
+
+  .summer-s{
+    color: white;
+    font-size: 60px;
+    transform: translate(-60px,-20px);
+    // margin-bottom: -10px;
+  }
+  .summer-word{
+    transform: translateX(-25px);
+    font-size: $fontSize;
+    color: white;
+    line-height: 150%;
+    letter-spacing: 1px;  
+    padding: 30px;
+    background-color: hsl(33, 50%, 91%, .35); 
+  }
+
+  .white{
+    border-top: 2px solid white;
+    width: 90%;
+  }
+
+  .Local-events{
+    color: white;
+    transform: translateX(-40px);
+  }
+
+  .one-s{
+    transform: translateX(80px);
+  }
+
+  .two-s{
+    text-align: end;
+  }
+
+
+
+  // 輪播
+  .divvvv{
+    // border: 1px solid red;
+    height: 100%;
+    width: 60%;
+    display: flex;
+    align-items: center;
+  }
+  .swiperr{
+    height: 520px;
+
+  }
+  .swiper-wrapperr{
+    height: 600px !important;
+  }
+  .swiperr {
+    width: 100%;
+    height: 100%;
+  }
+
+  .swiperr-slide{
+    position: relative;
+    text-align: center;
+    font-size: 16px;
+    background: #fff;
+    width: 286px !important;
+    height: 520px !important;
+    border-radius: 20px;
+    border: none;
+    overflow: hidden;
+    padding: 0;
+    margin: 50px 10px 5px 10px;
+    box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.1);
+    i{
+        margin: 12px;
+        width: 40px;
+        height: 50px;
+        font-size: 24px;
+        color:white;
+        position: absolute;
+        left: 0;
+        top: 0;
+    }
+    i:hover{  
+        color: #EB5757;
+        cursor: pointer;
+    }
+    a{
+      display: block;
+      img{
+        box-sizing: border-box !important;
+      }
+    }
+    a:hover{
+        color: black;        
+    }
+  }
+  img.card-img-top{
+    height: 190px;
+  }
+
+  .hrr{
+    display: inline-block;
+    margin: 0 auto;
+    border-top: 1px solid #0000004D;
+    width: 90%;
+    padding-bottom: 8px;
+  }
+  .card-body{
+    padding: 16px;
+    a{
+      display: block;
+      .card-text{
+        font-size: $fontSize;
+        line-height: 25px;
+        letter-spacing: 1px;
+        margin-bottom: 40px;
+      }
+
+    }
+  }
+
+
+  // .aaaa{
+  //   padding-top: 20px;
+  // }
+
+  .testt{
+    padding-top: 10px;
+    font-size: 25px;
+    font-weight: 600;
+    line-height: 28px; 
+  }
+
+
+
+
+  // winter
+  .winter-season{
+    background-image: url("../images/summer_camp/Rectangle 2sss62.png");
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+    height: 600px;
+    display: flex;
+    justify-content: space-between;
+    position: relative;
+  }
+
+  .winter-season-gray{
+    height: 100%;
+    width: 30%;
+    background-color: #5E5E5E80;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+  }
+  
+  .winter-s{
+    color: white;
+    font-size: 60px;
+    padding-bottom: 20px;
+    text-align: center;
+  }
+
+  .winter-word{
+    transform: translateX(30px);
+    // text-align: right;
+    font-size: $fontSize;
+    color: white;
+    line-height: 150%;
+    letter-spacing: 1px; 
+    padding: 30px;
+    background-color: hsl(33, 50%, 91%, .35);  
+  }
+
+  .winter-white{
+    border-top: 2px solid white;
+    width: 90%;
+    transform: translateX(38px);
+  }
+
+  .winter-Local-events{
+    color: white;
+    display: inline-block;
+    transform: translateX(38px);
+  }
+
+  .one-w{
+    transform: translateX(-80px);
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    // border: 1px solid red;
+  }
+
+  .festival-ss{
+    color: white;
+    text-align: center;
+    font-size: 60px;
+    padding-top: 60px;
+    padding-bottom: 10px;
+  }
+
+  .winter-bgg, .summer-bgg{
+    display: none;
+    padding-bottom: 50px;
+  }
+
+  .winter-bgg{
+    background-image: url("../images/summer_camp/Rectangle 2sss62.png");
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+    width: 100%;
+  }
+  .summer-bgg{
+    background-image: url("../images/summer_camp/Rectangle 281.jpg");
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+    width: 100%;
+  }
+
+  @media screen and (max-width: 768px){
+    .winter-bgg, .summer-bgg{
+      display: block;
+    }
+    .winter-season, .summer-season{
+      display: none;
+    }
+  }
+
+
+  // festival
+ 
+
+  .festival{
+    text-align: center;
+    font-size: 60px;
+    padding-top: 60px;
+    padding-bottom: 10px;
+  }
+  
+  .festival-bg{
+    background-image: url("../images/summer_camp/Rectangle 311.jpg");
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+    width: 100%;
+    padding-bottom: 50px;
+  }
+
+  
+  .arr_icon_hover{
+    display: none;
+  }
+
+
+  
+  .local_theme_two{
+    @include flex-center;
+    margin: 30px auto 60px;
+    a{
+      display: inline-flex;
+      justify-content: center;
+      margin: 0 20px;
+      &:hover{
+        color: white;
+        .local_theme-sw{
+          background: $color_primary;
+          // border: none; 
+        }
+        .arr_icon{
+          display: none;
+        } 
+        .arr_icon_hover{
+          display: block;
+        }
+      }
+      .local_theme-sw{ 
+        padding: 15px 20px;
+        margin: 0;
+        width: 200px;
+        height: 45px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: white;
+        border: 2px solid #666666;
+      }
+    }
+  }
+  
+  @media screen and (max-width: 576px){
+    .local_theme_two{
+      flex-direction: column;
+      margin-bottom: 10px;
+      a{
+        margin-bottom: 20px;
+      }
+    }
+  }
+
+  .loc_showMore{
+    display: none;
+  }
+
+  @media screen and (max-width: 992px){
+    #app-local{
+      height: 1750px;
+      overflow: hidden;
+    }
+    #app-local.-open{
+      height: auto;
+    }
+    .loc_showMore{
+      display: block;
+      margin: 60px auto 30px !important;
+    } 
+  }
+
+  .loc_showMore.-off{
+    display: none;
+  }
+
+  @media screen and (min-width: 1680px) and (max-width: 1981px) {
+    .localTheme-row{
+        margin-bottom: 30px !important;
+        margin-left: calc((100% - 1255px) / 2);
+    }
+}
+@media screen and (min-width: 1250px) and (max-width: 1679.98px) {
+  .localTheme-row{
+        margin-bottom: 30px !important;
+        margin-left: calc((100% - 941px) / 2);
+    }
+}
+@media screen and (min-width: 768px) and (max-width: 1249.98px) {
+    .localTheme-row{
+        margin-bottom: 30px !important;
+        margin-left: calc((100% - 627px) / 2);
+    }
+}
+@media screen and (min-width: 605px) and (max-width: 767.98px) {
+    .localTheme-row{
+        margin-bottom: 30px !important;
+        margin-left: calc((100% - 314px) / 2);
+    } 
+}
+@media screen and (min-width: 320px) and (max-width: 604.98px) {
+    .localTheme-row{
+        margin-bottom: 30px !important;
+        margin-left: calc((100% - 314px) / 2);
+    }
+}
+
+  
+// 桌機板顯示目前頁面
+.tab_container li a#page_active3::before {
+    content: "";
+    background-color: $btn_color_primary;
+    width: 100%;
+    height: 3px;
+    position: absolute;
+    left: 0;
+    top: 26px;
+    display: block;
+    transform: scaleX(1);
+  } 
+
+  // 漢堡選單顯示目前頁面
+  ul.menu a li#h_page_active3{
+      color: $btn_color_primary;
+  }
+
+.row .card {
+    i.local-camp-favorite{
+      color: #EB5757 !important;
+  }
+}

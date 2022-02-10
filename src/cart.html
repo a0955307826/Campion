@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+    <head>
+        @@include('./layout/meta.html', {
+        "title" : "購物車"
+        })
+        @@include('./layout/chat.html')
+        <script src="js/vue.js"></script>
+        <script src="js/vue.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-/bQdsTh/da6pkI1MST/rWKFNjaCP5gBSY4sEBT38Q/9RBh9AH40zEOg7Hlq2THRZ" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.24.0/axios.min.js"></script>
+        <script>
+            function init() {
+                loginCheck();
+            }
+
+            // ===== 登入檢查 ===== //
+            function loginCheck(){    
+                $.ajax({            
+                    method: "POST",
+                    url: "./Frontend/LoginCheck.php",
+                    data:{},            
+                    dataType: "text",
+                    success: function (response) {
+                        if(response == ""){
+                            //尚未登入->前往登入頁
+                            alert('請先登入，將前往登入頁'); 
+                            location.href = './member_signIn.html';
+                        }else{
+                            showMember();
+                        }              
+                    },
+                    error: function(exception) {
+                        alert("數據載入失敗: " + exception.status);
+                    }
+                });
+            }
+
+            // ====== 顯示會員資訊 ======= //
+            function showMember() {
+                $.ajax({
+                    method: "POST",
+                    url: "./Frontend/Member.php",
+                    data: {},
+                    dataType: "text",
+                    success: function (response) {
+                        $('.guest_icon').css('display', 'none');
+                        $('.icon_create').after(response);
+                        
+                        // 取得購物車資料
+                        // getCartData();
+                    },
+                    error: function (exception) {
+                        alert("數據載入失敗: " + exception.status);
+                    },
+                });
+            }
+        </script>
+    </head>
+
+    <body onload="init()">
+        @@include('./layout/header.html')
+
+        <section class="cart_container" id="cart">
+            <div class="container cart_width">
+                <div class="cart_head">
+                    <h1 class="cart_headTitle">購物車</h1>
+                    <hr>
+                </div>
+                <div class="cart_board" v-for="cart_product in cart_products">
+                    <div class="cart_item cart_item_lg">
+                        <div class="cart_checkBox">
+                            <input type="checkbox" @click="singleCheck" :value="cart_product.ID" v-model="selectedProducts">
+                        </div>
+                        <img :src="'./images/summer_camp/' + cart_product.IMG" alt="">
+                        <div class="cart_detail">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="cart_productDetail">
+                                        <h3 class="cart_productDetailTitle">【{{ cart_product.COUNTRY }}-{{ cart_product.CITY }}】{{ cart_product.NAME }}</h3>
+                                        <div class="cart_productOption">
+                                            <h3 style="margin-right: 10px;"><i class="bi bi-calendar-check-fill"></i>{{ cart_product.BATCH }}：
+                                            </h3>
+                                            <h3>{{ cart_product.START_DATE }} ～ {{ cart_product.END_DATE }}</h3>
+                                        </div>
+                                        <div class="cart_content">
+                                            <p class="cart_contentWord" style="font-size: 14px; line-height: 20px;">{{ cart_product.CONTEXT }}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="cart_personItem">
+                                        <h3 class="cart_people">人數</h3>
+                                        <div class="cart_substract" @click="reduce(cart_product)">-</div>
+                                        <p class="cart_text"> <input type="text" v-model="cart_product.ATTENDEES"></p>
+                                        <div class="cart_add" @click="add(cart_product)">+</div>
+                                    </div>
+                                </div>
+                                <div class="col-md-2">
+                                    <div class="cart_price">TWD {{ (parseInt(cart_product.PRICE) * parseInt(cart_product.ATTENDEES)).toLocaleString() }}</div>
+                                </div>
+                                <div class="col-md-1">
+                                    <div data-toggle="modal" data-target="#cart_confirm_modal"
+                                        class="cart_btn btn-trash text-end">
+                                        <i class="fa fa-lg fa-trash-o" @click="remove(cart_product.ID)">
+                                        </i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="cart_footer">
+                    <div class="cart_boardAction">
+                        <div class="cart_checkBox">
+                            <input type="checkbox" name="" @click="selectAll" :checked="checkAll" id="checkBoxAll">
+                            <label for="checkBoxAll" class="cart_CheckBoxTitle">全選</label>
+                            <span class="cart_gap">|</span>
+                            <button type="button" class="btn_sub" data-bs-toggle="modal" data-bs-target="#exampleModal">刪除所有項目</button>
+                            <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"
+                                aria-hidden="true">
+                                <div class="modal-dialog modal-dialog-centered ">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="exampleModalLabel">購物車</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <p>確定要刪除所有行程</p>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn_sub" data-bs-dismiss="modal">取消</button>
+                                            <button type="button" class="btn_sub" data-bs-dismiss="modal" @click="removeAll">確認</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="cart_boardBtnAll text-end">
+                            <div class="cart_total">
+                                <span class="cart_priceTitle">{{count}}件商品合計</span>
+                                <span class="cart_totalPrice">TWD {{ parseInt(total).toLocaleString() }}</span>
+                            </div>
+                            <button class="btn_sub" @click="CartUpdate">結帳</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        @@include('./layout/footer.html')
+        <script>
+            // 設定當前頁面 css：桌機版 header
+            let page = document.getElementsByClassName("header_pg");
+            for (let i = 0; i < (page.length); i++) {
+                if (page[i].id !== "page_active0") {
+                    page[i].removeAttribute('id');
+                }
+            }
+            // 設定當前頁面 css：漢堡選單
+            let ham_page = document.getElementsByClassName("ham_pg");
+            for (let i = 0; i < (ham_page.length); i++) {
+                if (ham_page[i].id !== "h_page_active0") {
+                    ham_page[i].removeAttribute('id');
+                }
+            }
+
+
+            // Vue 購物車功能
+            new Vue({
+                el: '#cart',
+                data: {
+                    checkAll: false,
+                    selectedProducts: [],
+                    cart_products: [],
+                    count: 0
+                },
+                computed: {
+                    total() {
+                        let total = 0;
+                        this.cart_products.forEach((v, k) => {
+                            if (this.selectedProducts.indexOf(v.ID) != -1)
+                                total += v.ATTENDEES * v.PRICE;                               
+                        });
+                        
+                        // 總筆數
+                        this.count = this.selectedProducts.length;
+                        // console.log(this.count);
+                        return total;
+                    }
+                },
+                methods: {
+                    // ==== 增加人數 ==== //
+                    add(cart_product) {
+                        let ATTENDEES = parseInt(cart_product.ATTENDEES);
+                        let PARTICIPANTS = parseInt(cart_product.PARTICIPANTS);
+                        
+                        if(ATTENDEES < PARTICIPANTS){
+                            cart_product.ATTENDEES = (cart_product.ATTENDEES * 1) + 1;
+                            // return ATTENDEES = this.count;
+                        }else{
+                            alert("人數已達上限");
+                        }
+                    },
+                    
+                    // ==== 減少人數 ==== //
+                    reduce(cart_product) {
+                        if (cart_product.ATTENDEES > 1) {
+                            cart_product.ATTENDEES -= 1;
+                        }
+                    },
+                    
+                    // ==== 購物車全選==== //
+                    selectAll(event) {
+                        if (!event.currentTarget.checked) {
+                            this.selectedProducts = [];
+                        } else {
+                            this.selectedProducts = [];
+                            this.cart_products.forEach((value, key) => {
+                                this.selectedProducts.push(value.ID);
+                            });
+                        }
+                    },
+                    
+                    // ==== 購物車單選==== //
+                    singleCheck(e) {
+                        let val = e.target.value;
+                        // console.log(val);
+
+                        this.checkAll = false;
+                        (val == -1) ? this.selectedProducts.push(val) : this.selectedProducts.splice(val, 1);
+                
+                        if (this.selectedProducts.length == (this.cart_products.length-1)) {
+                            this.checkAll = true;
+                        }
+
+                        // let selectIndex = this.selectedProducts.indexOf(id);
+                        // // 不存在就加入，用Index來splice，而不是id
+                        // (selectIndex == -1) ? this.selectedProducts.push(selectIndex) : this.selectedProducts.splice(selectIndex, 1);
+                        // // 判斷是否全部勾選
+                        // this.checkAll = this.cart_products.length == this.selectedProducts.length;
+                    },
+                    
+                    // // ==== 購物車移除全部 ==== //
+                    removeAll() {
+                        this.cart_products = this.cart_products.filter((cart_product) => {
+                            // console.log(cart_product.ID);
+
+                            // 呼叫PHP刪除購物車全部資料
+                            axios.get('./Frontend/CartDeleteAll.php',{
+                                params: {
+                                    products_ID: cart_product.ID
+                                },
+                            })
+                            .then((res) => {
+                                // console.log(res.data);
+                            })
+                            .catch((error) => console.log(error));
+                            
+                            // 回傳購物車
+                            return cart_product.ID === 0;
+                        });
+                    }, 
+                    
+                    // ==== 購物車移除單筆 ==== //
+                    remove(cart_productIDToRemove) {
+                        if(confirm("確定要刪除?")){
+                            this.cart_products = this.cart_products.filter((cart_product) => {
+                                // console.log(cart_product.ID);
+    
+                                // 呼叫PHP刪除購物車全部資料
+                                axios.get('./Frontend/CartDeleteAll.php',{
+                                    params: {
+                                        products_ID: cart_productIDToRemove
+                                    },
+                                })
+                                .then((res) => {
+                                    // console.log(res.data);
+                                })
+                                .catch((error) => console.log(error));
+                                return cart_product.ID !== cart_productIDToRemove;
+                            });
+                        }
+                    },
+                    
+                    // ===== 點擊結帳更新購物車資料 ===== //
+                    CartUpdate(){
+                        if(this.selectedProducts.length == 0){
+                            alert('請先選擇商品！');
+                        }else{
+                            // 一點擊先清除session
+                            sessionStorage.clear();
+                            let selProducts = [];
+                            
+                            // 確認是否有勾選行程，是:加入selProducts陣列
+                            for(let i = 0; i < this.selectedProducts.length; i++){
+                                selProducts.push(this.selectedProducts[i]);
+                                if(!selProducts.length == 0){
+                                    sessionStorage.setItem('CartID', JSON.stringify(selProducts));
+                                }
+                            }
+                            
+                            // console.log(this.selectedProducts);
+                            // let ATTENDEES;
+                            this.cart_products.forEach((v, k) => {
+                                if (this.selectedProducts.indexOf(v.ID) != -1){
+                                    // ATTENDEES = v.ATTENDEES;
+                                    console.log(this.selectedProducts);
+                                    // 更新購物車資料
+                                    axios.get('./Frontend/CartUpdate.php',{
+                                        params: {
+                                            CartID: JSON.stringify(this.selectedProducts),
+                                            attendess: v.ATTENDEES
+                                        },
+                                    })
+                                    .then((res) => {
+                                        // console.log(res.data);
+                                        location.href = "./process.html";
+                                    })
+                                    .catch((error) => console.log(error));   // 失敗時候的處理函數
+                                }                                                          
+                            });
+                        }
+                    }
+                },
+
+                mounted(){
+                    axios.get('./Frontend/Cart.php')
+                        .then((res) => {
+                            console.log(res.data);
+                            this.cart_products = res.data
+                        })   // 成功時候的處理函數
+                        .catch((error) => console.log(error));   // 失敗時候的處理函數
+                },
+            
+            });
+        </script>
+    </body>
+
+</html>

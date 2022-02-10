@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+@@include('./layout/meta.html', {
+    "title" : "Campion | 獲得靈感" 
+})
+@@include('./layout/chat.html')
+
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">  
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script src="./js/vue.js"></script>
+    
+    <script>
+      function init(){
+        showMember();
+      }
+      
+     
+      // 顯示會員資訊
+      function showMember() {
+        $.ajax({
+          method: "POST",
+          url: "./Frontend/Member.php",
+          data: {},
+          dataType: "text",
+          success: function (response) {
+            $('.guest_icon').css('display', 'none');
+            $('.icon_create').after(response);
+          },
+          error: function (exception) {
+            alert("數據載入失敗: " + exception.status);
+          },
+        });
+      }
+      // 顯示會員資訊結束
+      
+    </script>
+    <style>
+        *{
+            box-sizing: border-box;
+        }
+        .addstyle{
+            transform: scale(1.1);
+            z-index: 2;
+        }
+    </style>
+</head>
+<body onload="init()">
+    <main>
+        @@include('./layout/header.html')
+        <!-- ideas 首頁 -->
+        <div id="app">
+    
+            <!-- ideas 首頁 -->
+            <section class=" ideas_container ideas_index quizDisplay">
+                <!-- <img  class="ideas_container_banner" src="./images/ideas/ideasbanner.png" alt=""> -->
+                <div class="ideas_Title">
+                    <h2>不知道孩子適合哪種營隊嗎？</h2>
+                    <h4>我們提供一個小測驗，協助您篩選出適合孩子的營隊行程</h4>
+                </div>
+                <div class="ideas_img">
+                    <img src="./images/ideas/ideas.png">
+                </div>
+                <div class="ideas_el">
+                    <button class="ideas_btn ideas_btn_index quizStartBtn btn">獲得靈感</button>
+                </div>
+            </section>
+    
+            <!-- ideas 第一題-->
+            <section class="ideas_frist">
+                <div class="ideas_Title">
+                    <h2>您孩子的年齡是？</h2>
+                </div>
+                <div class="ideas_img quizCheck">
+                    <input type="radio" name="question" id="ten_twelve" value="10歲~12歲" v-model="all_data.AGE" @click="addcss">
+                    <label class="ideas_img_item" for="ten_twelve">
+                        <img src="./images/ideas/ideas_1-1.png">
+                        <h3>10~12歲</h3>
+                    </label>
+                    <input type="radio" name="question" id="thirteen_fifteen" value="13歲~15歲" v-model="all_data.AGE" @click="addcss">
+                    <label class="ideas_img_item" for="thirteen_fifteen">
+                        <img src="./images/ideas/ideas_1-2.png">
+                        <h3>13~15歲</h3>
+                    </label>
+                    <input type="radio" name="question" id="sixteen_eighteen" value="16歲~18歲" v-model="all_data.AGE" @click="addcss">
+                    <label class="ideas_img_item" for="sixteen_eighteen">
+                        <img src="./images/ideas/ideas_1-3.png">
+                        <h3>16~18歲</h3>
+                    </label>
+                </div>
+                <div class="ideas_el">
+                    <!-- <a href="./ideas.html"><button class="ideas_btn ideas_prev">上一步</button></a> -->
+                    <button class="ideas_btn ideas_next btn">下一步</button>
+                </div>
+            </section>
+    
+            <!-- ideas 第二題-->
+            <section class="ideas_container ideas_fourth">
+                <div class="ideas_Title">
+                    <h2>選擇參與區域</h2>
+                </div>
+                <div class="ideas_img quizCheck">
+                    <input type="radio" name="question" id="asia" value="大洋洲" v-model="all_data.CONTINENT">
+                    <label class="ideas_img_item" for="asia">
+                        <img src="./images/ideas/GettyImages-637831742_lightingeffect 1.png">
+                        <h3>大洋洲</h3>
+                    </label>
+                    <input type="radio" name="question" id="europe" value="歐洲" v-model="all_data.CONTINENT">
+                    <label class="ideas_img_item" for="europe">
+                        <img src="./images/ideas/GettyImages-897391816-1 1.png">
+                        <h3>歐洲</h3>
+                    </label>
+                    <input type="radio" name="question" id="america" value="美洲" v-model="all_data.CONTINENT">
+                    <label class="ideas_img_item" for="america">
+                        <img src="./images/ideas/istock-4067187-medium 1.png">
+                        <h3>美洲</h3>
+                    </label>
+                </div>
+                <div class="ideas_el">
+                    <!-- <a href="./ideas_third.html"><button class="ideas_btn ideas_prev">上一步</button></a> -->
+                    <button class="ideas_btn ideas_next btn">下一步</button>
+                </div>
+            </section>
+    
+            <!-- ideas 第三題-->
+            <section class="ideas_container ideas_third">
+                <div class="ideas_Title">
+                    <h2>選擇孩子此次參與的目的</h2>
+                </div>
+                <div class="ideas_img quizCheck">
+                    <input type="radio" name="question" id="language" value="語言" v-model="all_data.THEME">
+                    <label class="ideas_img_item" for="language">
+                        <img src="./images/ideas/ideas_3-1.png">
+                        <h3>語言進修</h3>
+                    </label>
+                    <input type="radio" name="question" id="promote" value="運動" v-model="all_data.THEME">
+                    <label class="ideas_img_item" for="promote">
+                        <img src="./images/ideas/ideas_3-2.png">
+                        <h3>提升自我</h3>
+                    </label>
+                    <input type="radio" name="question" id="explore" value="自然" v-model="all_data.THEME">
+                    <label class="ideas_img_item" for="explore">
+                        <img src="./images/ideas/ideas_3-3.png">
+                        <h3>探索世界</h3>
+                    </label>
+                </div>
+                <div class="ideas_el">
+                    <button class="ideas_btn ideas_more btn" id="btnResult">查看行程</button>
+                </div>
+            </section>
+    
+            <!-- 結果 -->
+            <section class="ideas_container ideas_second">
+                <div class="ideas_img quizCheck">
+    
+                    <!-- <div id="app-summer" style="width: 100%"> -->
+                        <div class="row justify-content-center ideas_filter sw-row" align-items-start style="margin-bottom: 30px; margin-left: 0;">
+                            <div v-for="(item, index) in caculated_card" class="card" style="width: 18rem; cursor: pointer" >
+                              <i class="fas fa-heart fav_heart" @click="favorite(index)"></i>
+                              <div @click="schedule(index)">
+                                <img :src= "'./images/summer_camp/' + item.IMG" class="card-img-top"/>
+                                <div class="card-body">
+                                <h5 class="card-title">
+                                【{{item.COUNTRY}}-{{item.CITY}}】<br>
+                                {{item.NAME}}
+                                </h5>
+                                <hr style="border: 0.5px solid #000000" />
+                                <p class="card-text">
+                                {{checkTitle(item.CONTEXT)}}...
+                                </p>
+                                <a class="a">
+                                  Learn more 
+                                  <img src="./images/summer_camp/icon.png"/>
+                                </a>
+                                </div>
+                              </div>
+                            </div>
+                        </div>
+                    <!-- </div>         -->
+                </div>
+            </section>
+        </div>
+        @@include('./layout/footer.html')
+    </main>
+    
+    <script>  
+        let vm = new Vue({
+            el: "#app",
+            data:{
+                dataa: [],
+                all_data:{
+                    AGE:null,
+                    CONTINENT:null,
+                    THEME:null,
+                },
+            },
+
+            methods: {
+                checkTitle(theTitle){
+                    return theTitle.slice(0, 40); // 只取40個字，以免破版
+                },
+
+                schedule(index){
+                    // alert(index);
+                    localStorage.setItem('getID', JSON.stringify(this.caculated_card[index]['ID']));
+                    // location.href = `./schedule.html`;
+                    location.href = `./schedule.html?id=${this.caculated_card[index]['ID']}`;
+                    // console.log(this.caculated_card[index]['ID']);
+                },
+
+                addcss(e){
+                    // console.log(e.target);
+                    e.target.nextElementSibling.classList.add( "addstyle")                   
+                    $('.ideas_img_item').click(function(){
+                        $(this).addClass( "addstyle");
+                        $(this).siblings().removeClass( "addstyle");
+                    });  
+                },
+
+                // 加入收藏 -- 移除收藏
+                favorite(index) {
+                  $.ajax({
+                      method: 'POST',
+                      url: './Frontend/LoginCheck.php',
+                      dataType: 'text',
+                      data: {},
+                      success: function (res) {
+                        if (res == "") {
+                          let r = confirm("尚未登入，是否前往登入頁面");
+                          if (r == true) {
+                            window.location = "member_signIn.html";
+                          }
+                        }else {
+                          let getHeart = document.getElementsByClassName('winter_fav_heart');
+                          if (getHeart[index].classList.contains("winter-camp-favorite")) {
+                            $.ajax({
+                              method: 'POST',
+                              url: './Frontend/summer_favorite_delete.php',
+                              dataType: 'text',
+                              data: {
+                                ITINERARY_NUMBER: index + 13,
+                              },
+                              success: function(res) {
+                                alert("移除收藏!!");
+                              }
+                            });
+                            getHeart[index].classList.remove("winter-camp-favorite");
+                          } else { 
+                            getHeart[index].classList.add("winter-camp-favorite"); 
+                            localStorage.setItem('catchHeart', JSON.parse(index));
+                            $.ajax({
+                              method: 'POST',
+                              url: './Frontend/summer_favorite_add.php',
+                              dataType: 'text',
+                              data: {
+                                ITINERARY_NUMBER: index + 13,
+                              },
+                              success: function(res) { 
+                                if(res != "done") {
+                                  console.log(res);
+                                  alert("加入收藏!!");
+                                }
+                              }
+                            });
+                          }
+                        }
+                      }
+                    });
+                  },
+            },    
+
+            computed:{
+                caculated_card(){
+                    // console.log(this.all_data);
+                    let card_list = []
+                    for(let i = 0; i < this.dataa.length; i++){
+                        if((this.dataa[i].AGE === this.all_data.AGE) && (this.dataa[i].CONTINENT === this.all_data.CONTINENT) && (this.dataa[i].THEME === this.all_data.THEME)){
+                            card_list.push(this.dataa[i])
+                            // console.log(this.dataa[i]);
+                        }
+                    }
+                    return card_list
+                },
+            },
+
+            mounted(){
+                $.getJSON('./Frontend/ideas.php').then((res) => {
+                    // console.log(res);
+                    this.dataa = res;
+                });
+
+                //頁面切換, 是否填選答案
+                $('.btn').click(function(){
+                    if(!$(this).hasClass('quizFinish')){  //hasClass 是否包含, 
+                        if(!$(this).hasClass('quizStartBtn') && $(this).parent().siblings('.quizCheck').children(':radio:checked').val() == null){
+                            console.log(this);
+                            alert('請選擇您的答案!')
+                        }else{
+                            $(this).parents('section').removeClass('quizDisplay');
+                            $(this).parents('section').next('section').addClass('quizDisplay');
+                        }
+                    }
+                });
+
+            },
+
+        });
+
+        // 設定當前頁面 css：桌機版 header
+        let page = document.getElementsByClassName("header_pg");
+            for(let i = 0; i < (page.length); i++){
+                if(page[i].id !== "page_active4"){
+                    page[i].removeAttribute('id');
+                }
+            }
+        // 設定當前頁面 css：漢堡選單
+        let ham_page = document.getElementsByClassName("ham_pg");
+        for(let i = 0; i < (ham_page.length); i++){
+            if(ham_page[i].id !== "h_page_active4"){
+                ham_page[i].removeAttribute('id');
+            }
+        }
+
+        // const btn_el = document.querySelector('.ideas_btn_index');
+        // // console.log(btn_el);
+
+        // btn_el.addEventListener('click', function(){
+        //     const ideas = document.querySelector('.ideas_index')
+        //     const ideas_one = document.querySelector('.ideas_frist');
+        //     // console.log(ideas_one);
+
+        //     ideas.style.display = "none";
+        //     ideas_one.style.display = "block";
+        // });
+            
+    </script>
+
+</body>
+</html>
